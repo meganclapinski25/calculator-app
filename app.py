@@ -5,8 +5,8 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        num1 = float(request.form['num1'])
-        num2 = float(request.form['num2'])
+        num1 = int(request.form['num1'])
+        num2 = int(request.form['num2'])
         operation = request.form['operation']
 
         if operation == 'add':
@@ -26,6 +26,8 @@ def index():
         return render_template('index.html', result=result)
 
     return render_template('index.html')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

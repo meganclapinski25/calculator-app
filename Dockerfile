@@ -1,27 +1,20 @@
-# Most of the time, Alpine is a great base image to start with.
-# If we're building a container for Python, we use something different.
-# Learn why here: https://pythonspeed.com/articles/base-image-python-docker-images/
-# TLDR: Alpine is very slow when it comes to running Python!
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
 
-# STEP 1: Install base image. Optimized for Python.
-FROM python:3.7-slim-buster
-
-# STEP 2: Copy the source code in the current directory to the container
-# Store it in a folder named /app.
-ADD . /app
-
-# STEP 3: Set working directory to /app so we can execute commands in it
+# Set the working directory in the container
 WORKDIR /app
 
-# STEP 4: Install required dependencies
+# Copy the requirements file
+COPY requirements.txt .
+
+# Install any necessary dependencies
 RUN pip install -r requirements.txt
 
-# STEP 5: Declare environment variables
-ENV FLASK_APP=app.py
-ENV FLASK_ENV=development
+# Copy the current directory contents into the container at /app
+COPY . .
 
-# STEP 6: Expose the port that Flask is running on
-EXPOSE 5005
+# Expose port 5000 to the outside world
+EXPOSE 5000
 
-# STEP 7: Run Flask!
-CMD ["flask", "run", "--host=0.0.0.0"]
+# Run the application with Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
